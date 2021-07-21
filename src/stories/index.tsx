@@ -158,6 +158,9 @@ export default function Example(props) {
             setTimeout(() => resolve(URL.createObjectURL(file)), 1500);
           });
         }}
+        onChange={(v) => {
+          console.log(v())
+        }}
         embeds={embeds}
         {...props}
       />
