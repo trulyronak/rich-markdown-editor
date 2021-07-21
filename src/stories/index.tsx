@@ -1,6 +1,7 @@
 import * as React from "react";
 import { dark, light } from "../theme";
 import Editor from "..";
+import StickBlockMenu from '../components/StickBlockMenu'
 
 const docSearchResults = [
   {
@@ -79,6 +80,38 @@ const embeds = [
   },
 ];
 
+const withStick = (WrappedComponent: React.ComponentClass<any>) => {
+  return class WithStickBarEditor extends WrappedComponent {
+    constructor (props) {
+      super(props)
+    }
+
+    render() {
+      return (
+        <>
+          {
+            this.view && <StickBlockMenu
+            view={this.view}
+            commands={this.commands}
+            dictionary={this.dictionary(this.props.dictionary)}
+            rtl={this.state.isRTL}
+            onClose={this.handleCloseBlockMenu}
+            uploadImage={this.props.uploadImage}
+            onLinkToolbarOpen={this.handleOpenLinkMenu}
+            onImageUploadStart={this.props.onImageUploadStart}
+            onImageUploadStop={this.props.onImageUploadStop}
+            onShowToast={this.props.onShowToast}
+          />
+          }
+          {super.render()}
+        </>
+      )
+    }
+  }
+}
+
+const StickEditor = withStick(Editor)
+
 export default function Example(props) {
   const { body } = document;
   if (body)
@@ -88,7 +121,7 @@ export default function Example(props) {
 
   return (
     <div style={{ padding: "1em 2em" }}>
-      <Editor
+      <StickEditor
         onCreateLink={title => {
           // Delay to simulate time taken for remote API request to complete
           return new Promise((resolve, reject) => {

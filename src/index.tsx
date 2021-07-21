@@ -19,6 +19,7 @@ import { SearchResult } from "./components/LinkEditor";
 import { EmbedDescriptor, ToastType } from "./types";
 import SelectionToolbar from "./components/SelectionToolbar";
 import BlockMenu from "./components/BlockMenu";
+import StickBlockMenu from "./components/StickBlockMenu";
 import LinkToolbar from "./components/LinkToolbar";
 import Tooltip from "./components/Tooltip";
 import Extension from "./lib/Extension";
@@ -689,7 +690,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     }
   );
 
-  render = () => {
+  render() {
     const {
       dir,
       readOnly,
@@ -723,6 +724,18 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             />
             {!readOnly && this.view && (
               <React.Fragment>
+                {/* <StickBlockMenu
+                  view={this.view}
+                  commands={this.commands}
+                  dictionary={dictionary}
+                  rtl={isRTL}
+                  onClose={this.handleCloseBlockMenu}
+                  uploadImage={this.props.uploadImage}
+                  onLinkToolbarOpen={this.handleOpenLinkMenu}
+                  onImageUploadStart={this.props.onImageUploadStart}
+                  onImageUploadStop={this.props.onImageUploadStop}
+                  onShowToast={this.props.onShowToast}
+                /> */}
                 <SelectionToolbar
                   view={this.view}
                   dictionary={dictionary}
