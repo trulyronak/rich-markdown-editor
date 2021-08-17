@@ -19,6 +19,7 @@ import {
   addRowAt,
   createTable,
   getCellsInColumn,
+  getCellsInRow,
   moveRow,
 } from "prosemirror-utils";
 import { Plugin, TextSelection } from "prosemirror-state";
@@ -66,6 +67,16 @@ export default class Table extends Node {
         cells.forEach(({ pos }) => {
           transaction = transaction.setNodeMarkup(pos, null, {
             alignment,
+          });
+        });
+        dispatch(transaction);
+      },
+      setRowAttr: ({ bg, index }) => (state, dispatch) => {
+        const cells = getCellsInRow(index)(state.selection) || [];
+        let transaction = state.tr;
+        cells.forEach(({ pos }) => {
+          transaction = transaction.setNodeMarkup(pos, null, {
+            bg,
           });
         });
         dispatch(transaction);
