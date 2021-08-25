@@ -51,6 +51,7 @@ import TableHeadCell from "./nodes/TableHeadCell";
 import TableRow from "./nodes/TableRow";
 
 // marks
+import Color from "./marks/Colorify";
 import Bold from "./marks/Bold";
 import Code from "./marks/Code";
 import Highlight from "./marks/Highlight";
@@ -314,6 +315,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             dictionary,
             onShowToast: this.props.onShowToast,
           }),
+          new Color(),
           new CheckboxList(),
           new CheckboxItem(),
           new BulletList(),
@@ -1083,6 +1085,18 @@ const StyledEditor = styled("div")<{
     }
   }
 
+  .colorify.red {
+    background-color: #FBBFBC;
+  }
+
+  .colorify.yellow {
+    background-color: #FFF895;
+  }
+
+  .colorify.green {
+    background-color: #C5F1C1;
+  }
+  
   .notice-block .content {
     flex-grow: 1;
   }
