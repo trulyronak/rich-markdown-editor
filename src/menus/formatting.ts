@@ -12,11 +12,13 @@ import {
 } from "outline-icons";
 import { isInTable } from "prosemirror-tables";
 import { EditorState } from "prosemirror-state";
+import { isCellSelection } from 'prosemirror-utils'
 import isInList from "../queries/isInList";
 import isMarkActive from "../queries/isMarkActive";
 import isNodeActive from "../queries/isNodeActive";
 import { MenuItem } from "../types";
 import baseDictionary from "../dictionary";
+import { MergeVertical } from '../components/Icons/MergeCell'
 
 export default function formattingMenuItems(
   state: EditorState,
@@ -98,6 +100,13 @@ export default function formattingMenuItems(
       active: isNodeActive(schema.nodes.blockquote),
       attrs: { level: 2 },
       visible: allowBlocks,
+    },
+    {
+      name: "mergeCells",
+      tooltip: dictionary.deleteColumn,
+      icon: MergeVertical,
+      active: () => isCellSelection(state.selection),
+      visible: isTable,
     },
     {
       name: "separator",

@@ -19,11 +19,21 @@ export default class TableCell extends Node {
       isolating: true,
       parseDOM: [{ tag: "td" }],
       toDOM(node) {
-        return [
-          "td",
+        const attrs = Object.assign(
+          {},
           node.attrs.alignment
             ? { style: `text-align: ${node.attrs.alignment}` }
             : {},
+          node.attrs.colspan > 1
+            ? { colspan: node.attrs.colspan }
+            : {},
+          node.attrs.rowspan > 1
+            ? { rowspan: node.attrs.rowspan }
+            : {},
+        )
+        return [
+          "td",
+          attrs,
           0,
         ];
       },
@@ -42,7 +52,9 @@ export default class TableCell extends Node {
   parseMarkdown() {
     return {
       block: "td",
-      getAttrs: tok => ({ alignment: tok.info }),
+      getAttrs: tok => {
+        return { alignment: tok.info, colspan: tok.meta?.colspan, rowspan: tok.meta?.rowspan }
+      },
     };
   }
 
@@ -55,8 +67,11 @@ export default class TableCell extends Node {
             const decorations: Decoration[] = [];
             const cells = getCellsInColumn(0)(selection);
 
+            const offset: number[] = []
+
             if (cells) {
-              cells.forEach(({ pos }, index) => {
+              cells.forEach(({ pos, node }, index) => {
+                offset.push(node.attrs.rowspan - 1);
                 if (index === 0) {
                   decorations.push(
                     Decoration.widget(pos + 1, () => {
@@ -77,22 +92,23 @@ export default class TableCell extends Node {
                 }
                 decorations.push(
                   Decoration.widget(pos + 1, () => {
-                    const rowSelected = isRowSelected(index)(selection);
-
+                    const i = index + offset.slice(0, index).reduce((acc, cur) => acc + cur, 0)
+                    const rowSelected = isRowSelected(i)(selection);
+                    
                     let className = "grip-row";
                     if (rowSelected) {
                       className += " selected";
                     }
-                    if (index === 0) {
+                    if (i === 0) {
                       className += " first";
-                    } else if (index === cells.length - 1) {
+                    } else if (i === cells.length - 1) {
                       className += " last";
                     }
                     const grip = document.createElement("a");
                     grip.className = className;
                     grip.addEventListener("mousedown", event => {
                       event.preventDefault();
-                      this.options.onSelectRow(index, state);
+                      this.options.onSelectRow(i, state);
                     });
                     return grip;
                   })

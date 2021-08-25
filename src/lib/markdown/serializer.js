@@ -306,9 +306,50 @@ export class MarkdownSerializerState {
     let headerBuffer = "";
     const prevTable = this.inTable;
     this.inTable = true;
+    const fakeCols = {}
+
+    let maxRows = node.childCount;
+    let maxCols = 0
+    node.forEach((row) => {
+      let cols = 0
+      row.forEach((cell) => {
+        cols += cell.attrs.colspan
+      })
+      maxCols = Math.max(maxCols, cols)
+    })
+
+    const fakeTable = []
+    for (let i = 0; i < maxRows; i++) {
+      fakeTable.push(new Array(maxCols).fill("{{}}"))
+    }
+    node.forEach((row, _, i) => {
+      row.forEach((cell, _, j) => {
+        if (cell.attrs.rowspan > 1) {
+          new Array(cell.attrs.rowspan - 1)
+            .fill(0)
+            .forEach((_, index) => {
+              fakeTable[i + index + 1][j] = "^^"
+            })
+        }
+        let fakeJ = j
+        if (cell.attrs.colspan > 1) {
+          new Array(cell.attrs.colspan - 1)
+            .fill(0)
+            .forEach(() => {
+              while (fakeTable[i][fakeJ] === "^^") {
+                fakeJ += 1
+              }
+              fakeJ += 1
+              fakeTable[i][fakeJ] = ""
+            })
+        }
+      })
+    })
 
     // ensure there is an empty newline above all tables
     this.out += "\n";
+
+    let fakeJ = 0
 
     // rows
     node.forEach((row, _, i) => {
@@ -317,9 +358,22 @@ export class MarkdownSerializerState {
         headerBuffer = undefined;
       }
 
+      fakeJ = -1
+      
       // cols
       row.forEach((cell, _, j) => {
-        this.out += j === 0 ? "| " : " | ";
+        this.out += "| " //j === 0 ? "| " : " | ";
+        
+        fakeJ += 1
+        while (fakeTable[i][fakeJ] !== "{{}}" && fakeJ < maxCols) {
+          if (fakeTable[i][fakeJ] === "^^") {
+            this.out += "^^|"
+          }
+          if (fakeTable[i][fakeJ] === "") {
+            this.out += "|"
+          }
+          fakeJ += 1
+        }
 
         cell.forEach(para => {
           // just padding the output so that empty cells take up the same space
@@ -334,6 +388,16 @@ export class MarkdownSerializerState {
           }
         });
 
+        while (j === row.childCount - 1 && fakeJ < maxCols) {
+          if (fakeTable[i][fakeJ] === "^^") {
+            this.out += "|^^"
+          }
+          if (fakeTable[i][fakeJ] === "") {
+            this.out += "|"
+          }
+          fakeJ += 1
+        }
+
         if (i === 0) {
           if (cell.attrs.alignment === "center") {
             headerBuffer += "|:---:";
@@ -347,7 +411,7 @@ export class MarkdownSerializerState {
         }
       });
 
-      this.out += " |\n";
+      this.out += "|\n";
     });
 
     this.inTable = prevTable;
