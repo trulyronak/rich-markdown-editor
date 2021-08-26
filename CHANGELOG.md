@@ -1,5 +1,23 @@
 # @jiangweixian1994/rich-markdown-editor
 
+## 0.1.5
+
+### Patch Changes
+
+- build merge cell version
+
+## 0.1.4
+
+### Patch Changes
+
+- fix merge cell
+
+## 0.1.3
+
+### Patch Changes
+
+- add color plugin
+
 ## 0.1.2
 
 ### Patch Changes
