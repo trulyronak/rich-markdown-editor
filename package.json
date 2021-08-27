@@ -13,7 +13,8 @@
     "build": "tsc",
     "preversion": "yarn build",
     "watch": "yarn tsc-watch",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "postinstall": "patch-package"
   },
   "serve": {
     "open": true,
@@ -97,6 +98,8 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.0.8",
     "jest": "^26.6.3",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "prettier": "^1.19.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
