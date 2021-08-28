@@ -317,36 +317,78 @@ export class MarkdownSerializerState {
       maxCols = Math.max(maxCols, cols)
     })
 
-    const fakeTable = []
+    let fakeTable = []
     for (let i = 0; i < maxRows; i++) {
       fakeTable.push(new Array(maxCols).fill("{{}}"))
     }
+
+    // FIXME:
+    const trackTables = []
+    for (let i = 0; i < maxRows; i++) {
+      trackTables.push(new Array(maxCols).fill("{{}}"))
+    }
+    
     node.forEach((row, _, i) => {
+      let offsetJ = 0
       row.forEach((cell, _, j) => {
-        if (cell.attrs.rowspan > 1) {
-          new Array(cell.attrs.rowspan - 1)
-            .fill(0)
-            .forEach((_, index) => {
-              fakeTable[i + index + 1][j] = "^^";
-              for (let _j = 1; _j < cell.attrs.colspan; _j++) {
-                fakeTable[i + index + 1][j + _j] = "";
-              }
-            })
+        while (
+          trackTables[i][j + offsetJ] !== "{{}}" &&
+          j + offsetJ < maxCols
+        ) {
+          offsetJ += 1
         }
-        let fakeJ = j
-        if (cell.attrs.colspan > 1) {
-          new Array(cell.attrs.colspan - 1)
-            .fill(0)
-            .forEach(() => {
-              while (fakeTable[i][fakeJ] === "^^") {
-                fakeJ += 1
-              }
-              fakeJ += 1
-              fakeTable[i][fakeJ] = ""
-            })
+        if (cell.attrs.rowspan === 1 && cell.attrs.colspan === 1) {
+          trackTables[i][j + offsetJ] = '{{}}'
+          return
         }
+        console.log(i, j, offsetJ, cell, trackTables[i])
+        for (let rspan = 0; rspan < cell.attrs.rowspan; rspan++) {
+          for (let cspan = 0; cspan < cell.attrs.colspan; cspan++) {
+            if (rspan === 0 && cspan === 0) {
+              trackTables[i][j + offsetJ] = '{{}}'
+              continue
+            }
+            if (cspan === 0) {
+              trackTables[i + rspan][j + offsetJ] = '^^'
+              continue
+            }
+            trackTables[i + rspan][j + offsetJ + cspan] = ''
+          }
+        }
+        console.log(i, j, offsetJ, cell, trackTables[i + 1])
       })
     })
+
+    console.log(trackTables)
+
+    // node.forEach((row, _, i) => {
+    //   row.forEach((cell, _, j) => {
+    //     if (cell.attrs.rowspan > 1) {
+    //       new Array(cell.attrs.rowspan - 1)
+    //         .fill(0)
+    //         .forEach((_, index) => {
+    //           fakeTable[i + index + 1][j] = "^^";
+    //           for (let _j = 1; _j < cell.attrs.colspan; _j++) {
+    //             fakeTable[i + index + 1][j + _j] = "";
+    //           }
+    //         })
+    //     }
+    //     let fakeJ = j
+    //     if (cell.attrs.colspan > 1) {
+    //       new Array(cell.attrs.colspan - 1)
+    //         .fill(0)
+    //         .forEach(() => {
+    //           while (fakeTable[i][fakeJ] === "^^") {
+    //             fakeJ += 1
+    //           }
+    //           fakeJ += 1
+    //           fakeTable[i][fakeJ] = ""
+    //         })
+    //     }
+    //   })
+    // })
+
+    fakeTable = trackTables
 
 
     // ensure there is an empty newline above all tables
