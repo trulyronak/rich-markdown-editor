@@ -317,11 +317,6 @@ export class MarkdownSerializerState {
       maxCols = Math.max(maxCols, cols)
     })
 
-    let fakeTable = []
-    for (let i = 0; i < maxRows; i++) {
-      fakeTable.push(new Array(maxCols).fill("{{}}"))
-    }
-
     // FIXME:
     const trackTables = []
     for (let i = 0; i < maxRows; i++) {
@@ -341,7 +336,6 @@ export class MarkdownSerializerState {
           trackTables[i][j + offsetJ] = '{{}}'
           return
         }
-        console.log(i, j, offsetJ, cell, trackTables[i])
         for (let rspan = 0; rspan < cell.attrs.rowspan; rspan++) {
           for (let cspan = 0; cspan < cell.attrs.colspan; cspan++) {
             if (rspan === 0 && cspan === 0) {
@@ -355,41 +349,8 @@ export class MarkdownSerializerState {
             trackTables[i + rspan][j + offsetJ + cspan] = ''
           }
         }
-        console.log(i, j, offsetJ, cell, trackTables[i + 1])
       })
     })
-
-    console.log(trackTables)
-
-    // node.forEach((row, _, i) => {
-    //   row.forEach((cell, _, j) => {
-    //     if (cell.attrs.rowspan > 1) {
-    //       new Array(cell.attrs.rowspan - 1)
-    //         .fill(0)
-    //         .forEach((_, index) => {
-    //           fakeTable[i + index + 1][j] = "^^";
-    //           for (let _j = 1; _j < cell.attrs.colspan; _j++) {
-    //             fakeTable[i + index + 1][j + _j] = "";
-    //           }
-    //         })
-    //     }
-    //     let fakeJ = j
-    //     if (cell.attrs.colspan > 1) {
-    //       new Array(cell.attrs.colspan - 1)
-    //         .fill(0)
-    //         .forEach(() => {
-    //           while (fakeTable[i][fakeJ] === "^^") {
-    //             fakeJ += 1
-    //           }
-    //           fakeJ += 1
-    //           fakeTable[i][fakeJ] = ""
-    //         })
-    //     }
-    //   })
-    // })
-
-    fakeTable = trackTables
-
 
     // ensure there is an empty newline above all tables
     this.out += "\n";
@@ -410,11 +371,11 @@ export class MarkdownSerializerState {
         this.out += "|" //j === 0 ? "| " : " | ";
         
         fakeJ += 1
-        while (fakeTable[i][fakeJ] !== "{{}}" && fakeJ < maxCols) {
-          if (fakeTable[i][fakeJ] === "^^") {
+        while (trackTables[i][fakeJ] !== "{{}}" && fakeJ < maxCols) {
+          if (trackTables[i][fakeJ] === "^^") {
             this.out += "^^|"
           }
-          if (fakeTable[i][fakeJ] === "") {
+          if (trackTables[i][fakeJ] === "") {
             this.out += "|"
           }
           fakeJ += 1
@@ -434,10 +395,10 @@ export class MarkdownSerializerState {
         });
 
         while (j === row.childCount - 1 && fakeJ < maxCols) {
-          if (fakeTable[i][fakeJ] === "^^") {
+          if (trackTables[i][fakeJ] === "^^") {
             this.out += "|^^"
           }
-          if (fakeTable[i][fakeJ] === "") {
+          if (trackTables[i][fakeJ] === "") {
             this.out += "|"
           }
           fakeJ += 1
