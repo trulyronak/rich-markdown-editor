@@ -1,5 +1,11 @@
 # @jiangweixian1994/rich-markdown-editor
 
+## 0.2.3
+
+### Patch Changes
+
+- fix count selected cell
+
 ## 0.2.2
 
 ### Patch Changes
