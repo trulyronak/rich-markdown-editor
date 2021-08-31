@@ -1,5 +1,11 @@
 # @jiangweixian1994/rich-markdown-editor
 
+## 0.2.2
+
+### Patch Changes
+
+- patch packages devonly
+
 ## 0.1.5
 
 ### Patch Changes
