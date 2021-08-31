@@ -1,5 +1,11 @@
 # @jiangweixian1994/rich-markdown-editor
 
+## 0.2.4
+
+### Patch Changes
+
+- build before publish
+
 ## 0.2.3
 
 ### Patch Changes
