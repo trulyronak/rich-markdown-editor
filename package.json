@@ -1,7 +1,7 @@
 {
   "name": "@jiangweixian1994/rich-markdown-editor",
   "description": "A rich text editor with Markdown shortcuts",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "license": "BSD-3-Clause",
@@ -14,7 +14,8 @@
     "preversion": "yarn build",
     "watch": "yarn tsc-watch",
     "build-storybook": "build-storybook",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "prepublishOnly": "yarn run build"
   },
   "serve": {
     "open": true,

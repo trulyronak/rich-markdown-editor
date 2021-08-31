@@ -1,5 +1,13 @@
 # @jiangweixian1994/rich-markdown-editor
 
+## 0.2.0
+
+### Minor Changes
+
+- - table head background color
+  - fix serialize table
+  - split table cell
+
 ## 0.1.5
 
 ### Patch Changes
