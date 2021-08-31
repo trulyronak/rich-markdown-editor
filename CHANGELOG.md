@@ -1,5 +1,23 @@
 # @jiangweixian1994/rich-markdown-editor
 
+## 0.2.4
+
+### Patch Changes
+
+- build before publish
+
+## 0.2.3
+
+### Patch Changes
+
+- fix count selected cell
+
+## 0.2.2
+
+### Patch Changes
+
+- patch packages devonly
+
 ## 0.2.1
 
 ### Patch Changes
