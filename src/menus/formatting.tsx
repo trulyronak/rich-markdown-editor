@@ -144,7 +144,7 @@ export default function formattingMenuItems(
       tooltip: dictionary.deleteColumn,
       icon: SplitCell,
       active: () => {
-        return isCellSelection(state.selection) && isSingle
+        return isCellSelection(state.selection)
       },
       visible: isSingle,
     },
